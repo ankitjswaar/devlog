@@ -73,11 +73,23 @@ export const handleCallback = async (req, res, next) => {
 
     const { access_token, expires_in, refresh_token } = tokenResponse.data;
 
-    const profileResponse = await axios.get(`${LINKEDIN_API}/userinfo`, {
-      headers: { Authorization: `Bearer ${access_token}` },
-    });
+    // Prefer OpenID userinfo; fallback to legacy /me endpoint for broader app setups.
+    let profile = null;
+    let linkedinPersonId = null;
 
-    const profile = profileResponse.data;
+    try {
+      const profileResponse = await axios.get(`${LINKEDIN_API}/userinfo`, {
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+      profile = profileResponse.data;
+      linkedinPersonId = profile?.sub || null;
+    } catch (userinfoError) {
+      const meResponse = await axios.get(`${LINKEDIN_API}/me`, {
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+      profile = meResponse.data;
+      linkedinPersonId = profile?.id || null;
+    }
 
     const user = await User.findById(userId).select('+linkedinAccessToken');
     if (!user) {
@@ -86,14 +98,21 @@ export const handleCallback = async (req, res, next) => {
       );
     }
 
-    user.linkedinId = profile.sub;
+    if (!linkedinPersonId) {
+      throw new AppError('Could not read LinkedIn profile id from callback', 500);
+    }
+
+    user.linkedinId = linkedinPersonId;
     user.linkedinAccessToken = access_token;
     if (refresh_token) user.linkedinRefreshToken = refresh_token;
     user.linkedinTokenExpiry = new Date(Date.now() + expires_in * 1000);
     user.linkedinProfile = {
-      name: profile.name || `${profile.given_name || ''} ${profile.family_name || ''}`.trim(),
-      picture: profile.picture,
-      headline: profile.locale || '',
+      name:
+        profile?.name ||
+        `${profile?.localizedFirstName || ''} ${profile?.localizedLastName || ''}`.trim() ||
+        `${profile?.given_name || ''} ${profile?.family_name || ''}`.trim(),
+      picture: profile?.picture || null,
+      headline: profile?.headline || profile?.locale || '',
     };
     await user.save();
 
@@ -106,8 +125,9 @@ export const handleCallback = async (req, res, next) => {
     const raw = error.response?.data || error.message;
     const linkedInMessage =
       error.response?.data?.error_description ||
-      error.response?.data?.message ||
       error.response?.data?.error ||
+      error.response?.data?.message ||
+      error.message ||
       'Failed to connect LinkedIn';
     console.error('LinkedIn callback error:', raw);
     res.redirect(
