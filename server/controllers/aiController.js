@@ -65,20 +65,22 @@ const updateStreak = (user) => {
 
 export const generatePost = async (req, res, next) => {
   try {
-    const { notes, tone } = req.body;
+    const { notes, tone, length } = req.body;
 
     if (!notes?.trim()) {
       throw new AppError('Please provide your learning notes', 400);
     }
 
     const validTones = ['professional', 'sarcastic', 'tired'];
+    const validLengths = ['short', 'medium', 'long'];
     const selectedTone = validTones.includes(tone) ? tone : 'professional';
+    const selectedLength = validLengths.includes(length) ? length : 'medium';
 
     if (!process.env.GEMINI_API_KEY) {
       throw new AppError('Gemini API key not configured', 500);
     }
 
-    const prompt = buildGenerationPrompt(notes.trim(), selectedTone);
+    const prompt = buildGenerationPrompt(notes.trim(), selectedTone, selectedLength);
     const generatedPost = await generateWithGemini(prompt);
 
     if (!generatedPost) {
@@ -90,6 +92,7 @@ export const generatePost = async (req, res, next) => {
       originalLog: notes.trim(),
       generatedPost,
       tone: selectedTone,
+      length: selectedLength,
     });
 
     const user = await User.findById(req.user._id);
@@ -103,6 +106,7 @@ export const generatePost = async (req, res, next) => {
         originalLog: post.originalLog,
         generatedPost: post.generatedPost,
         tone: post.tone,
+        length: post.length,
         postedToLinkedIn: post.postedToLinkedIn,
         createdAt: post.createdAt,
       },

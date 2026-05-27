@@ -21,6 +21,11 @@ const postSchema = new mongoose.Schema(
       enum: ['professional', 'sarcastic', 'tired'],
       required: true,
     },
+    length: {
+      type: String,
+      enum: ['short', 'medium', 'long'],
+      default: 'medium',
+    },
     postedToLinkedIn: {
       type: Boolean,
       default: false,

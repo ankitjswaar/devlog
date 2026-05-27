@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import DashboardLayout from '../layouts/DashboardLayout';
 import StatsCard from '../components/StatsCard';
 import ToneSelector from '../components/ToneSelector';
+import LengthSelector from '../components/LengthSelector';
 import PostPreview from '../components/PostPreview';
 import PreviousPosts from '../components/PreviousPosts';
 import { postsAPI, linkedinAPI } from '../services/api';
@@ -13,6 +14,7 @@ const Dashboard = () => {
   const { linkedinConnected } = useAuth();
   const [notes, setNotes] = useState('');
   const [tone, setTone] = useState('professional');
+  const [length, setLength] = useState('medium');
   const [generatedPost, setGeneratedPost] = useState('');
   const [currentPostId, setCurrentPostId] = useState(null);
   const [generating, setGenerating] = useState(false);
@@ -60,7 +62,7 @@ const Dashboard = () => {
     setGeneratedPost('');
 
     try {
-      const { data } = await postsAPI.generate({ notes, tone });
+      const { data } = await postsAPI.generate({ notes, tone, length });
       setGeneratedPost(data.post.generatedPost);
       setCurrentPostId(data.post.id);
       setStats((prev) => ({
@@ -208,6 +210,17 @@ const Dashboard = () => {
             />
           </div>
 
+          <div>
+            <label className="mb-3 block text-sm font-medium text-gray-300">
+              Post Length
+            </label>
+            <LengthSelector
+              selected={length}
+              onSelect={setLength}
+              disabled={generating}
+            />
+          </div>
+
           <button
             onClick={handleGenerate}
             disabled={generating || !notes.trim()}
@@ -232,6 +245,7 @@ const Dashboard = () => {
               content={generatedPost}
               loading={generating}
               tone={tone}
+              length={length}
             />
 
             {generatedPost && (

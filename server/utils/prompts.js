@@ -7,9 +7,20 @@ const toneInstructions = {
     'Write in a tired developer tone — honest, slightly exhausted, relatable, understated humor. Like someone logging off at 11pm after fixing one bug.',
 };
 
-export const buildGenerationPrompt = (notes, tone) => {
+const lengthInstructions = {
+  short:
+    'LENGTH: Short post — strictly 60-100 words. Punchy, one key takeaway, minimal fluff. Perfect for a quick daily update.',
+  medium:
+    'LENGTH: Medium post — 150-220 words. Balanced depth, 2-3 short paragraphs, LinkedIn sweet spot.',
+  long:
+    'LENGTH: Long post — 280-400 words. Tell a mini story with context, what you tried, what you learned, and a takeaway. Still scannable.',
+};
+
+export const buildGenerationPrompt = (notes, tone, length = 'medium') => {
   const toneKey = tone.toLowerCase();
+  const lengthKey = length.toLowerCase();
   const instruction = toneInstructions[toneKey] || toneInstructions.professional;
+  const lengthRule = lengthInstructions[lengthKey] || lengthInstructions.medium;
 
   return `You are a skilled developer who writes engaging LinkedIn posts.
 
@@ -21,11 +32,13 @@ ROUGH NOTES:
 TONE: ${tone}
 ${instruction}
 
+${lengthRule}
+
 RULES:
 - Sound human and authentic — never robotic or corporate-buzzword heavy
 - Avoid cringe, clichés like "I'm humbled" or "excited to announce"
 - Keep it readable: short paragraphs, natural flow
-- Length: 150-280 words (LinkedIn-friendly)
+- Respect the word count target above — do not exceed it by more than 15%
 - Include 3-5 relevant hashtags at the end on their own line
 - Do NOT use markdown formatting
 - Do NOT wrap in quotes

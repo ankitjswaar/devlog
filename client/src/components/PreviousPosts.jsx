@@ -40,9 +40,16 @@ const PreviousPosts = ({ posts, loading }) => {
           className="card hover:border-gray-600"
         >
           <div className="mb-3 flex items-center justify-between">
-            <span className={`text-xs font-medium capitalize ${toneColors[post.tone]}`}>
-              {post.tone}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className={`text-xs font-medium capitalize ${toneColors[post.tone]}`}>
+                {post.tone}
+              </span>
+              {post.length && (
+                <span className="rounded-full bg-surface-elevated px-2 py-0.5 text-xs text-gray-400 capitalize">
+                  {post.length}
+                </span>
+              )}
+            </div>
             <div className="flex items-center gap-2">
               {post.postedToLinkedIn && (
                 <span className="rounded-full bg-[#0A66C2]/20 px-2 py-0.5 text-xs text-[#0A66C2]">

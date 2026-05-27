@@ -1,0 +1,19 @@
+# Copy these into Railway → Your Service → Variables
+# Use the SAME values as your local server/.env (do NOT commit .env to GitHub)
+
+MONGODB_URI=your-mongodb-connection-string-here
+JWT_SECRET=your-jwt-secret-here
+JWT_EXPIRES_IN=7d
+GEMINI_API_KEY=your-gemini-key-here
+GEMINI_MODEL=gemini-2.5-flash
+LINKEDIN_CLIENT_ID=your-linkedin-client-id
+LINKEDIN_CLIENT_SECRET=your-linkedin-client-secret
+LINKEDIN_REDIRECT_URI=https://YOUR-RAILWAY-DOMAIN.up.railway.app/api/linkedin/callback
+CLIENT_URL=https://YOUR-VERCEL-APP.vercel.app
+NODE_ENV=production
+
+# Notes:
+# - Railway sets PORT automatically — you don't need to add PORT
+# - LINKEDIN_REDIRECT_URI must match LinkedIn Developer App redirect URL exactly
+# - CLIENT_URL = your Vercel URL only (no trailing slash)
+# - If password has special characters in MONGODB_URI, URL-encode them (@ → %40, etc.)

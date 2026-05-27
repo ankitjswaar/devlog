@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 
-const PostPreview = ({ content, loading, tone }) => {
+const PostPreview = ({ content, loading, tone, length }) => {
   if (loading) {
     return (
       <div className="card space-y-4">
@@ -40,7 +40,9 @@ const PostPreview = ({ content, loading, tone }) => {
           </div>
           <div>
             <p className="text-sm font-medium">LinkedIn Preview</p>
-            <p className="text-xs text-gray-500 capitalize">{tone} tone</p>
+            <p className="text-xs text-gray-500 capitalize">
+              {tone} tone · {length || 'medium'} length
+            </p>
           </div>
         </div>
         <span className="rounded-full bg-surface-elevated px-3 py-1 text-xs text-gray-400">
