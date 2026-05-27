@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-surface-border;
+  }
+
+  body {
+    @apply bg-black text-white antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  ::selection {
+    @apply bg-accent/30 text-white;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-black;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-surface-elevated rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-600;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 font-medium text-white transition-all duration-200 hover:bg-accent-hover hover:shadow-lg hover:shadow-accent/20 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-none;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-surface-border bg-surface-card px-6 py-3 font-medium text-white transition-all duration-200 hover:border-gray-500 hover:bg-surface-elevated disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-linkedin {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-[#0A66C2] px-6 py-3 font-medium text-white transition-all duration-200 hover:bg-[#004182] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .card {
+    @apply rounded-2xl border border-surface-border bg-surface-card p-6 transition-all duration-200;
+  }
+
+  .input-field {
+    @apply w-full rounded-xl border border-surface-border bg-surface-elevated px-4 py-3 text-white placeholder-gray-500 transition-all duration-200 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent;
+  }
+
+  .skeleton {
+    @apply animate-pulse rounded-lg bg-surface-elevated;
+  }
+}
