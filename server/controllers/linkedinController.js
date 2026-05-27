@@ -103,9 +103,15 @@ export const handleCallback = async (req, res, next) => {
       `${process.env.CLIENT_URL}/linkedin/callback?token=${jwt}&connected=true`
     );
   } catch (error) {
-    console.error('LinkedIn callback error:', error.response?.data || error.message);
+    const raw = error.response?.data || error.message;
+    const linkedInMessage =
+      error.response?.data?.error_description ||
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      'Failed to connect LinkedIn';
+    console.error('LinkedIn callback error:', raw);
     res.redirect(
-      `${process.env.CLIENT_URL}/linkedin/callback?error=${encodeURIComponent('Failed to connect LinkedIn')}`
+      `${process.env.CLIENT_URL}/linkedin/callback?error=${encodeURIComponent(linkedInMessage)}`
     );
   }
 };
