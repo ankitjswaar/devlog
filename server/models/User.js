@@ -1,6 +1,13 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+const normalizeProfileField = (value) => {
+  if (value == null) return value;
+  if (typeof value === 'string') return value;
+  if (typeof value === 'object') return JSON.stringify(value);
+  return String(value);
+};
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -41,8 +48,14 @@ const userSchema = new mongoose.Schema(
     },
     linkedinProfile: {
       name: String,
-      picture: String,
-      headline: String,
+      picture: {
+        type: String,
+        set: normalizeProfileField,
+      },
+      headline: {
+        type: String,
+        set: normalizeProfileField,
+      },
     },
     currentStreak: {
       type: Number,
