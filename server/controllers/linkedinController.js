@@ -9,6 +9,16 @@ const LINKEDIN_TOKEN_URL = 'https://www.linkedin.com/oauth/v2/accessToken';
 const LINKEDIN_API = 'https://api.linkedin.com/v2';
 
 const getLinkedInScopes = () => ['openid', 'profile', 'email', 'w_member_social'];
+const safeString = (value) => {
+  if (typeof value === 'string') return value;
+  if (value == null) return '';
+  if (typeof value === 'object') {
+    if (typeof value.localized === 'string') return value.localized;
+    if (typeof value.value === 'string') return value.value;
+    return JSON.stringify(value);
+  }
+  return String(value);
+};
 
 export const getAuthUrl = async (req, res, next) => {
   try {
@@ -111,8 +121,8 @@ export const handleCallback = async (req, res, next) => {
         profile?.name ||
         `${profile?.localizedFirstName || ''} ${profile?.localizedLastName || ''}`.trim() ||
         `${profile?.given_name || ''} ${profile?.family_name || ''}`.trim(),
-      picture: profile?.picture || null,
-      headline: profile?.headline || profile?.locale || '',
+      picture: safeString(profile?.picture) || null,
+      headline: safeString(profile?.headline || profile?.locale),
     };
     await user.save();
 
